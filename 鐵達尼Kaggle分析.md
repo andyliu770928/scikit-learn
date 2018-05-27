@@ -4,11 +4,11 @@
 <font size=2>&emsp;&emsp;這是我的第一個Kaggle專案，Titanic生存預測競賽是在Kaggle中是一個很經典的案例。藉由此練習與深入探討，我熟悉資料分析的流程，也對於python在機器學習的運用更加瞭解。經過一段時間的研究與努力，最終取得了Top 5%的成績，期待與大家討論交流。
 
 ## 分析大綱
-<font size=2>&emsp;&emsp; 1. 資料簡介
-<font size=2>&emsp;&emsp; 2. 數據清洗
-<font size=2>&emsp;&emsp; 3. 特徵工程
-<font size=2>&emsp;&emsp; 4. 建立模型
-<font size=2>&emsp;&emsp; 5. 繳交答案
+> 1. 資料簡介
+> 2. 數據清洗
+> 3. 特徵工程
+> 4. 建立模型
+> 5. 繳交答案
 
 ## 1. 資料簡介
 
@@ -38,7 +38,7 @@ train = pd.read_csv('train.csv', encoding='big5')
 test = pd.read_csv('test.csv', encoding='big5')
 
 #列出訓練資料集前5筆
-train.head(5)
+print(train.head(5))
 
 ```
 
@@ -50,11 +50,9 @@ train.head(5)
     .dataframe thead tr:only-child th {
         text-align: right;
     }
-
     .dataframe thead th {
         text-align: left;
     }
-
     .dataframe tbody tr th {
         vertical-align: top;
     }
@@ -162,7 +160,7 @@ train.head(5)
 
 ```python
 #描述訓練資料集的資料特性
-train.describe()
+print(train.describe())
 ```
 
 
@@ -173,11 +171,9 @@ train.describe()
     .dataframe thead tr:only-child th {
         text-align: right;
     }
-
     .dataframe thead th {
         text-align: left;
     }
-
     .dataframe tbody tr th {
         vertical-align: top;
     }
@@ -301,7 +297,7 @@ train.describe()
 
 ```python
 #列出測試資料集前5筆
-test.head(5)
+print(test.head(5))
 ```
 
 
@@ -312,11 +308,9 @@ test.head(5)
     .dataframe thead tr:only-child th {
         text-align: right;
     }
-
     .dataframe thead th {
         text-align: left;
     }
-
     .dataframe tbody tr th {
         vertical-align: top;
     }
@@ -456,13 +450,9 @@ ax[2,3].set_title('Survival Rate by Embarked')
 
 
 
-    <matplotlib.text.Text at 0x25d9a3396a0>
 
 
-
-
-![png](output_13_1.png)
-
+![Imgur](https://i.imgur.com/Jauy60v.png)
 
 ## 2.數據清洗
 
@@ -513,11 +503,9 @@ train.loc[Outliers_to_drop] # Show the outliers rows
     .dataframe thead tr:only-child th {
         text-align: right;
     }
-
     .dataframe thead th {
         text-align: left;
     }
-
     .dataframe tbody tr th {
         vertical-align: top;
     }
@@ -787,8 +775,8 @@ plt.show()
 ```
 
 
-![png](output_28_0.png)
 
+![Imgur](https://i.imgur.com/Lbf0DBo.png)
 
 <font size=2>&emsp;&emsp;由上圖我們可以看出，填補前與填補後的資料分布，大致上相同，沒有明顯分布變化。
 
@@ -808,16 +796,16 @@ plt.show()
 ```
 
 
-![png](output_30_0.png)
+![Imgur](https://i.imgur.com/SQKSFG7.png)
 
 
 
-![png](output_30_1.png)
+![Imgur](https://i.imgur.com/9mMwGtW.png)
 
 
 <font size=2>&emsp;&emsp;我同時也利用「年齡與存活比例分佈圖」、「年齡與存活率分佈圖」觀察到以下現象:
-<font size=2>&emsp;&emsp;&emsp;&emsp;    1. 死亡比率最高的年齡區段為20~30歲    
-<font size=2>&emsp;&emsp;&emsp;&emsp;    2. 小孩與老人的存活率較高
+> 1. 死亡比率最高的年齡區段為20~30歲    
+> 2. 小孩與老人的存活率較高
 <font size=2>&emsp;&emsp;合理推測，事發當時應該有「老人與小孩先走」的逃生順序，導致數據如此呈現。
 
 ### 2.2.2 Fare
@@ -837,7 +825,7 @@ plt.show()
 ```
 
 
-![png](output_34_0.png)
+![Imgur](https://i.imgur.com/CIoO3Km.png)
 
 
 <font size=2>&emsp;&emsp;透過觀察，Fare分佈圖是有右偏斜Skewness情形發生，偏斜係數為4.51，右偏斜的特性為「平均數>中位數」。去偏斜是數據預處理流程中的一個操作步驟，應先將原分佈取自然對數後再rescale，如此所得到的是一個具有常態分佈特性的數據。數據成常態分佈後可以更便捷的進行統計推斷(t檢驗、ANOVA或者線性回歸分析)。
@@ -853,7 +841,7 @@ plt.show()
 ```
 
 
-![png](output_36_0.png)
+![Imgur](https://i.imgur.com/Xz2VQpS.png)
 
 
 <font size=2>&emsp;&emsp;經過去偏斜後，資料分佈比較像是常態分佈，偏斜係數也由4.51下降為0.58
@@ -876,7 +864,7 @@ plt.show()
 ```
 
 
-![png](output_40_0.png)
+![Imgur](https://i.imgur.com/vJIlUw6.png)
 
 
 
@@ -889,9 +877,9 @@ full_data.Embarked = full_data.Embarked.fillna(most_embarked)
 ## 3. 特徵工程
 
 <font size=2>&emsp;&emsp;特徵工程是機器學習成功的關鍵，坊間常說「數據和特徵決定了機器學習的上限，而模型和算法只是逼近上限而已」。由此可見，特徵工程在機器學習中占有相當重要的地位。在實際應用當中，通常會把特徵工程看做是一個問題。事實上，特徵工程還包含3個子項目，以下將逐一探究。
-<font size=2>&emsp;&emsp; a. 特徵建構: 從原始數據中人工的構建新的特徵，取代原始數據的特徵
-<font size=2>&emsp;&emsp; b. 特徵提取: 將機器學習演算法不能識別的原始數據，轉化為演算法可以識別的特徵
-<font size=2>&emsp;&emsp; c. 特徵選擇: 從所有的特徵中選擇一組最好的特徵集，捨去無關的特徵，保留相關性高的特徵
+> 1. 特徵建構: 從原始數據中人工的構建新的特徵，取代原始數據的特徵
+> 2. 特徵提取: 將機器學習演算法不能識別的原始數據，轉化為演算法可以識別的特徵
+> 3. 特徵選擇: 從所有的特徵中選擇一組最好的特徵集，捨去無關的特徵，保留相關性高的特徵
 
 ### 3.1 特徵建構
 
@@ -915,10 +903,10 @@ plt.show()
 ```
 
 
-![png](output_48_0.png)
+![Imgur](https://i.imgur.com/zbOmt2y.png)
 
 
-<font size=2>&emsp;&emsp;我們可以從此表看出，家族人數2~4人的生存率都大於50%，而單獨一人或家族人數大於5人的生存率都較低，推測是因為單獨1人不易得到他人協助；而家族人數過多，可能會有互相等待找人而錯失逃生的絕佳時機。因此我們可以將此特徵做分組，1人為"Single"，2~4人為"SmallF"，5人以上為"LargeF"。
+<font size=2>&emsp;&emsp;我們可以從此表看出，家族人數2-4人的生存率都大於50%，而單獨一人或家族人數大於5人的生存率都較低，推測是因為單獨1人不易得到他人協助；而家族人數過多，可能會有互相等待找人而錯失逃生的絕佳時機。因此我們可以將此特徵做分組，1人為"Single"，2-4人為"SmallF"，5人以上為"LargeF"。
 <font size=2>&emsp;&emsp;這裡我引用的概念是「連續特徵的離散化」，一般機器學習很少直接將連續值作為邏輯回歸模型的特徵輸入，而是將連續特徵離散化為一系列0、1特徵或離散特徵，再導入模型。離散化的優點:
 > 1. 離散特徵的增加和減少都很容易，易於模型的快速迭代
 > 2. 離散化後的特徵對異常數據有很強的強健性
@@ -950,7 +938,7 @@ plt.show()
 ```
 
 
-![png](output_53_0.png)
+![Imgur](https://i.imgur.com/xUn16q0.png)
 
 
 <font size=2>&emsp;&emsp;這邊我想簡化Title的類別數量，因此我以將貴族相關稱謂的標記為"Royal"，船組人員或是稀有稱謂為"Rare"，年輕女性為"Miss"，已婚女性標記為"Mrs"，男性標記為"Mr"，小孩子標記為"Master"
@@ -974,7 +962,7 @@ plt.show()
 ```
 
 
-![png](output_56_0.png)
+![Imgur](https://i.imgur.com/ovkIaQm.png)
 
 
 
@@ -986,7 +974,7 @@ plt.show()
 ```
 
 
-![png](output_57_0.png)
+![Imgur](https://i.imgur.com/SpehmbM.png)
 
 
 <font size=2>&emsp;&emsp;藉由稱謂統計與存活分布圖，我們可以發現，貴族的生存率是100%，而女性與小孩都超過50%，男性與Rare的存活率都低於30%，這是我們之後分析的重要參考。
@@ -1043,10 +1031,10 @@ plt.show()
 ```
 
 
-![png](output_67_0.png)
+![Imgur](https://i.imgur.com/uJXkQnK.png)
 
 
-<font size=2>&emsp;&emsp;利用TPP指標，我們可以很清楚地看到，在交叉比對下的存活率，我們別在80%與50%，劃出標準線。並同時進行分組，大於80%為1，50~80%之間的為2，0~50%之間的為3，其餘的為4。有了TPP指標，之後在導入模型時，就不必再同時參考Title、Pclass、Person，將三個屬性組合成一個新的屬性，這也是一種降低維度的方法。
+<font size=2>&emsp;&emsp;利用TPP指標，我們可以很清楚地看到，在交叉比對下的存活率，我們別在80%與50%，劃出標準線。並同時進行分組，大於80%為1，50-80%之間的為2，0-50%之間的為3，其餘的為4。有了TPP指標，之後在導入模型時，就不必再同時參考Title、Pclass、Person，將三個屬性組合成一個新的屬性，這也是一種降低維度的方法。
 
 
 ```python
@@ -1070,12 +1058,12 @@ for i in Persons:
 ### 3.2 特徵提取
 
 <font size=2>&emsp;&emsp;在特徵建構完成之後，接著要做特徵提取，「特徵提取」的首要任務是將變數從文字轉換成數字/序數值，以利統計與導入演算法模型。以下分成兩種類型:
-<font size=2>&emsp;&emsp;&emsp;&emsp;1. 定性數據: 名目型，類別之間沒有自然順序或是大小(ex.Title、Sex)
-<font size=2>&emsp;&emsp;&emsp;&emsp;2. 定量數據: 數值型，通常為連續型，可區分大小(ex.Fare、Age)
+> 1. 定性數據: 名目型，類別之間沒有自然順序或是大小(ex.Title、Sex)
+> 2. 定量數據: 數值型，通常為連續型，可區分大小(ex.Fare、Age)
 
 
 ```python
-full_data.head(3)
+print(full_data.head(3))
 ```
 
 
@@ -1086,11 +1074,9 @@ full_data.head(3)
     .dataframe thead tr:only-child th {
         text-align: right;
     }
-
     .dataframe thead th {
         text-align: left;
     }
-
     .dataframe tbody tr th {
         vertical-align: top;
     }
@@ -1222,7 +1208,7 @@ full_data.loc[full_data.Age>60,'AgeCut']=6                           # Senior
 
 ### 3.2.2 Pclass & Person & Title
 
-<font size=2>&emsp;&emsp;在Pclass中，我們可以看到主要分成1~3個等級，以1、2、3作為分類，但是這三個等級之間沒有數值關係，演算法會將Pclass3視為比Pclass2大，為了避免誤導演算法的執行，這邊常使用的解決方法為「one-hot encoding」技術，將每個名目類別都建立一個新的特徵，以下我們將Pclass分成三個新的類別Pclass_1、Pclass_2、Pclass_3。
+<font size=2>&emsp;&emsp;在Pclass中，我們可以看到主要分成1~3個等級，以1、2、3作為分類，但是這三個等級之間沒有數值關係，演算法會將Pclass3視為比Pclass2大，為了避免誤導演算法的執行，這邊常使用的解決方法為「one-hot encoding」技術，將每個名目類別都建立一個新的特徵，以下我們將Pclass分成三個新的類別Pclass_1、Pclass_2、Pclass_3。<br>
 <font size=2>&emsp;&emsp;同時，我們可以觀察出Pclass_1的乘客的獲救率較高，右圖再加上性別的特徵綜合來看，Pclass1與2的女性乘客存活率高達90%以上，這可以做為之後特徵選擇的參考。
 
 
@@ -1234,7 +1220,7 @@ plt.show()
 ```
 
 
-![png](output_79_0.png)
+![Imgur](https://i.imgur.com/Q32WX2p.png)
 
 
 
@@ -1242,35 +1228,6 @@ plt.show()
 #對Pclass使用one-hot encoding
 full_data = pd.get_dummies(full_data, columns = ["Pclass"])
 ```
-
-
-    ---------------------------------------------------------------------------
-
-    ValueError                                Traceback (most recent call last)
-
-    <ipython-input-149-61195c55ecdc> in <module>()
-          2 full_data = pd.get_dummies(full_data, columns = ["Pclass"])
-          3 #刪除Pclass特徵
-    ----> 4 full_data.drop(labels = ["Pclass"], axis = 1, inplace = True)
-    
-
-    C:\Users\andyl\Anaconda3\lib\site-packages\pandas\core\generic.py in drop(self, labels, axis, level, inplace, errors)
-       2048                 new_axis = axis.drop(labels, level=level, errors=errors)
-       2049             else:
-    -> 2050                 new_axis = axis.drop(labels, errors=errors)
-       2051             dropped = self.reindex(**{axis_name: new_axis})
-       2052             try:
-    
-
-    C:\Users\andyl\Anaconda3\lib\site-packages\pandas\core\indexes\base.py in drop(self, labels, errors)
-       3573             if errors != 'ignore':
-       3574                 raise ValueError('labels %s not contained in axis' %
-    -> 3575                                  labels[mask])
-       3576             indexer = indexer[~mask]
-       3577         return self.delete(indexer)
-    
-
-    ValueError: labels ['Pclass'] not contained in axis
 
 
 <font size=2>&emsp;&emsp;Person與Embarked可以沿用Pclass的想法，也使用「one-hot encoding」技術將它轉換成獨立的特徵。記得使用完one-hot encoding後，原始的特徵可以刪除，否則相關性太高的特徵會影響到模型預測。
@@ -1306,11 +1263,9 @@ full_data.head(3)
     .dataframe thead tr:only-child th {
         text-align: right;
     }
-
     .dataframe thead th {
         text-align: left;
     }
-
     .dataframe tbody tr th {
         vertical-align: top;
     }
@@ -1457,34 +1412,6 @@ full_data.drop(labels = ["Cabin","Name","Age", "SibSp","Parch","Fare","Passenger
 ```
 
 
-    ---------------------------------------------------------------------------
-
-    ValueError                                Traceback (most recent call last)
-
-    <ipython-input-163-bff49e81b47b> in <module>()
-    ----> 1 full_data.drop(labels = ["Cabin","Name","Age", "SibSp","Parch","Fare","PassengerId","Family","Ticket", "Sex"], axis = 1, inplace = True)
-    
-
-    C:\Users\andyl\Anaconda3\lib\site-packages\pandas\core\generic.py in drop(self, labels, axis, level, inplace, errors)
-       2048                 new_axis = axis.drop(labels, level=level, errors=errors)
-       2049             else:
-    -> 2050                 new_axis = axis.drop(labels, errors=errors)
-       2051             dropped = self.reindex(**{axis_name: new_axis})
-       2052             try:
-    
-
-    C:\Users\andyl\Anaconda3\lib\site-packages\pandas\core\indexes\base.py in drop(self, labels, errors)
-       3573             if errors != 'ignore':
-       3574                 raise ValueError('labels %s not contained in axis' %
-    -> 3575                                  labels[mask])
-       3576             indexer = indexer[~mask]
-       3577         return self.delete(indexer)
-    
-
-    ValueError: labels ['Cabin' 'Name' 'Age' 'SibSp' 'Parch' 'Fare' 'PassengerId' 'Ticket' 'Sex'] not contained in axis
-
-
-
 ```python
 full_data.head()
 ```
@@ -1497,11 +1424,9 @@ full_data.head()
     .dataframe thead tr:only-child th {
         text-align: right;
     }
-
     .dataframe thead th {
         text-align: left;
     }
-
     .dataframe tbody tr th {
         vertical-align: top;
     }
@@ -1663,7 +1588,7 @@ plt.show()
 ```
 
 
-![png](output_91_0.png)
+![Imgur](https://i.imgur.com/gV1DrII.png)
 
 
 <font size=2>&emsp;&emsp;與Survived最不相關的可能是Embarked(C、Q、S)，older、LargeF、child、Pclass的相關性也於0.15，而female與male與TPP的相關性高達90%，因此也建議刪除，只要留下TPP即可，否則可能會有overfitting的情形，此即為第二階段特徵篩選：
@@ -1686,11 +1611,9 @@ full_data.head()
     .dataframe thead tr:only-child th {
         text-align: right;
     }
-
     .dataframe thead th {
         text-align: left;
     }
-
     .dataframe tbody tr th {
         vertical-align: top;
     }
@@ -1808,9 +1731,9 @@ X = train.drop(labels =["Survived"], axis = 1)
 ### 4.2 Cross-validation交叉驗證
 
 <font size=2>&emsp;&emsp;交叉驗證(Cross-validation)主要用於模型訓練或建模應用中，如分類預測、PCR、PLS回歸建模等。在給定的樣本空間中，拿出大部分樣本作為訓練集來訓練模型，剩餘的小部分樣本使用剛建立的模型進行預測，並求這小部分樣本的預測誤差或者預測精度。使用交叉驗證方法的目的主要有3個：
-<font size=2>&emsp;&emsp;1. 從有限的學習數據中獲取儘可能多的有效信息
-<font size=2>&emsp;&emsp;2. 交叉驗證從多個方向開始學習樣本的，可以有效的避免陷入局部最小值
-<font size=2>&emsp;&emsp;3. 可以在一定程度上避免過擬合問題
+> 1. 從有限的學習數據中獲取儘可能多的有效信息
+> 2. 交叉驗證從多個方向開始學習樣本的，可以有效的避免陷入局部最小值
+> 3. 可以在一定程度上避免過擬合問題
 
 
 ```python
@@ -1979,7 +1902,7 @@ plt.show()
 ```
 
 
-![png](output_111_0.png)
+![Imgur](https://i.imgur.com/H6dYcOf.png)
 
 
 <font size=2>&emsp;&emsp;由上圖我們可以看出其中SVC、AdaBoost演算法的準確率最高，而XGBC演算法最穩定。在代入模型時需要小心訓練資料集模型的準確度過高，反而可能會導致模型太過於偏向訓練資料集(train)，也就是所謂的overfitting過度擬合，一個荒謬的模型只要足夠複雜，是可以完美地適應資料。有句機器學習的反諷名言，「如果你花足夠的時間去拷問資料,它就會如你所願招供」。但是這樣做出來的模型是沒有意義的，而且真實應用上的準確度會降低許多。現在就讓我們來看看它們有沒有overfitting的情形吧~
@@ -2104,15 +2027,15 @@ plt.show()
 ```
 
 
-![png](output_118_0.png)
+![Imgur](https://i.imgur.com/aXwOKUz.png)
 
 
 
-![png](output_118_1.png)
+![Imgur](https://i.imgur.com/m3e3P29.png)
 
 
 
-![png](output_118_2.png)
+![Imgur](https://i.imgur.com/O1F6Jy1.png)
 
 
 ### 4.5 綜合演算法votingC
@@ -2158,7 +2081,7 @@ plt.show()
     
 
 
-![png](output_122_1.png)
+![Imgur](https://i.imgur.com/MOYMq8K.png)
 
 
 <font size=2>&emsp;&emsp;要確認模型的預測的真實狀況，可以利用混淆矩陣去觀察。
@@ -2193,7 +2116,7 @@ plt.show()
     
 
 
-![png](output_124_1.png)
+![Imgur](https://i.imgur.com/f9I8ylI.png)
 
 
 <font size=2>&emsp;&emsp;混淆矩陣主要判斷依據是f1 score越接近1越好。這次用train的預測成果，有31個存活者被我誤判成死亡，而有17個罹難者，我以為他們是倖存的，由此我可以做模型的調整。
@@ -2231,13 +2154,9 @@ my_solution.to_csv("my_solution_1.csv", index_label = ["PassengerId"])
     
 
 
-```python
-#圖
-```
+![Imgur](https://i.imgur.com/yZd8hvs.png)
 
 <font size=2>&emsp;&emsp;輸出結果的準確度為0.79425，大約為1700多名，因為是Demo版本，所以沒有突破我之前最高達到的0.82775的準確率，當然其中還有許多地方可以研究，Kaggle上也有許多大神可以學習，希望能彼此互相砥礪精進。
 
 
-```python
 
-```
