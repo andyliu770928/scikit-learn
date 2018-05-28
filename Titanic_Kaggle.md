@@ -4,15 +4,67 @@
 <font size=2>&emsp;&emsp;這是我的第一個Kaggle專案，Titanic生存預測競賽是在Kaggle中是一個很經典的案例。藉由此練習與深入探討，我熟悉資料分析的流程，也對於python在機器學習的運用更加瞭解。經過一段時間的研究與努力，最終取得了Top 5%的成績，期待與大家討論交流。
 
 ## 分析大綱
-> 1. 資料簡介
-> 2. 數據清洗
-> 3. 特徵工程
-> 4. 建立模型
-> 5. 繳交答案
+[1. 資料簡介](#1)
 
-## 1. 資料簡介
+> [1.1 讀取資料與導入套件](#1.1)
 
-### 1.1 讀取資料與導入套件
+> [1.2 資料的內容與類型](#1.2)
+
+> [1.3 分析目標](#1.3)
+
+> [1.4 概覽資料](#1.4)
+
+[2. 數據清洗](#2)
+
+> [2.1 離群值檢測](#2.1)
+
+> [2.2 填補遺漏值](#2.2)
+
+> > [2.2.1 Age](#2.2.1)
+
+> > [2.2.2 Fare](#2.2.2)
+
+> > [2.2.3 Embarked](#2.2.3)
+
+[3. 特徵工程](#3)
+
+> [3.1 特徵建構](#3.1)
+
+> > [3.1.1 Family](#3.1.1)
+
+> > [3.1.2 Title](#3.1.2)
+
+> > > [3.1.2.1 Age遺漏值填補進階](#3.1.2.1)
+
+> > [3.1.3 Person](#3.1.3)
+
+> > [3.1.4 TPP指標(Title+Pclass+Person)](#3.1.4)
+
+> [3.2 特徵提取](#3.2)
+
+> > [3.2.1 Cut(Fare, Age)](#3.2.1)
+
+> > [3.2.2 Pclass & Person & Title](#3.2.2)
+
+> [3.3 特徵選擇](#3.3)
+
+[4. 建立模型](#4)
+
+> [4.1 檔案分割](#4.1)
+
+> [4.2 Cross-validation交叉驗證](#4.2)
+
+> [4.3 引入作圖程式](#4.3)
+
+> [4.4 代入演算法](#4.4)
+
+> [4.5 綜合演算法votingC](#4.5)
+
+[5. 繳交答案](#5)
+
+<h2 id="1">1. 資料簡介</h2>
+
+<h3 id="1.1">1.1 讀取資料與導入套件</h3>
 
 
 ```python
@@ -277,8 +329,7 @@ print(train.describe())
 </div>
 
 
-
-### 1.2 資料的內容與類型
+<h3 id="1.2">1.2 資料的內容與類型</h3>
 
 <font size=2> 此數據訓練集共有891位乘客，資料內容包含:
 * 乘客編號　PassengerId: int 
@@ -408,12 +459,11 @@ print(test.head(5))
 </div>
 
 
-
-### 1.3 分析目標
+<h3 id="1.3">1.3 分析目標</h3>
 
 <font size=2>&emsp;&emsp;從test資料集，我們可以看出相較於train資料集少了Survived的特徵屬性。此專案的分析目標是藉由搭乘鐵達尼的乘客所擁有的屬性去預測這名乘客最後是否存活，1代表存活(survived)，0代表死亡(did not survived)。所有的屬性都有可能是潛在的影響因子，最終須要使用test資料集去做預測，並提交至Kaggle官網確認預測準確率。
 
-### 1.4 概覽資料
+<h3 id="1.4">1.4 概覽資料</h3>
 
 
 ```python
@@ -454,11 +504,13 @@ ax[2,3].set_title('Survival Rate by Embarked')
 
 ![Imgur](https://i.imgur.com/Jauy60v.png)
 
-## 2.數據清洗
+<h2 id="2">2.數據清洗</h2>
+
 
 <font size=2> &emsp;&emsp;在對於數據的內容與輪廓有些瞭解之後，我將對此數據進行一些篩選及填補，以及再做進一步的觀察，選出重要且具有代表性的特徵。</font>
 
-### 2.1 離群值檢測
+
+<h3 id="2.1">2.1 離群值檢測</h3>
 
 <font size=2>&emsp;&emsp;由於離群值往往會讓數據失真，因此在此使用離群值檢測，引用盒鬚圖的概念，把超過1.5倍IQR的數據篩選掉。
 
@@ -715,7 +767,7 @@ train = train.drop(Outliers_to_drop, axis = 0).reset_index(drop=True)
 full_data =  pd.concat(objs=[train, test], axis=0).reset_index(drop=True)
 ```
 
-### 2.2 填補遺漏值
+<h3 id="2.2">2.2 填補遺漏值</h3>
 
 <font size=2>&emsp;&emsp;一般數據常常會有遺漏值或是缺失值，這些資料的缺漏常常會造成數據的失真，甚至因為遺漏值太多，讓某些屬性的參考性大大降低，因此如何填補缺失值也是一門研究課題。由於填補遺漏值的動作，在所有資料都要執行，因此我們將train與test合併成full_data，方便填補遺漏值。
 
@@ -746,7 +798,7 @@ full_data.isnull().sum()
 
 <font size=2>&emsp;&emsp;由上表可以看出，綜合資料集的Age遺漏值有256個，Cabin的缺失值有1007個，Embarked缺失值有2個。由於Cabin遺漏比例過多，參考性過高(1007/1299)，預測時將不參考此特徵。以下將針對Age、Fare與Embarked，分別進行遺漏值填補。
 
-### 2.2.1 Age
+<h3 id="2.2.1">2.2.1 Age</h3>
 
 <font size=2>&emsp;&emsp;在處理遺漏值時，大多數的人都會「直接移除資料」或是用「平均值/眾數來填補遺漏值」，但這樣的做法並不推薦，前者會讓資料減少，後者可能會讓母體分布失真。因此，為了確保讓整體的Age分布能與原來的數據吻合，在這邊以"平均值+-標準差"之間的隨機數值填補Age遺漏值。(P.S.後續還有綜合其他概念的填補年齡方法，屆時再討論)
 
@@ -807,7 +859,8 @@ plt.show()
 > 2. 小孩與老人的存活率較高
 <font size=2>&emsp;&emsp;合理推測，事發當時應該有「老人與小孩先走」的逃生順序，導致數據如此呈現。
 
-### 2.2.2 Fare
+
+<h3 id="2.2.2">2.2.2 Fare</h3>
 
 <font size=2>&emsp;&emsp;Fare數據中，只有1個遺漏值，這個部份因為遺漏值很少，對於整體數據分佈影響不大，我們可以考慮使用簡單方式填補(平均數/眾數/中位數)。由下圖我們可以看得出Fare不是常態分佈，因此選擇中位數進行填補。
 
@@ -845,7 +898,7 @@ plt.show()
 
 <font size=2>&emsp;&emsp;經過去偏斜後，資料分佈比較像是常態分佈，偏斜係數也由4.51下降為0.58
 
-### 2.2.3 Embarked
+<h3 id="2.2.3">2.2.3 Embarked</h3>
 
 <font size=2>&emsp;&emsp;Embarked數據中，有2個遺漏值，觀察以下的資料集作圖，我們可以得知S港口是最多人上船的地方，但是存活率最低。以眾數的概念進行遺漏值的填補，對於整體的數據分布幾乎不產生影響。
 
@@ -872,19 +925,18 @@ plt.show()
 most_embarked = full_data.Embarked.value_counts().index[0]   
 full_data.Embarked = full_data.Embarked.fillna(most_embarked)
 ```
-
-## 3. 特徵工程
+<h2 id="3">3. 特徵工程</h2>
 
 <font size=2>&emsp;&emsp;特徵工程是機器學習成功的關鍵，坊間常說「數據和特徵決定了機器學習的上限，而模型和算法只是逼近上限而已」。由此可見，特徵工程在機器學習中占有相當重要的地位。在實際應用當中，通常會把特徵工程看做是一個問題。事實上，特徵工程還包含3個子項目，以下將逐一探究。
 > 1. 特徵建構: 從原始數據中人工的構建新的特徵，取代原始數據的特徵
 > 2. 特徵提取: 將機器學習演算法不能識別的原始數據，轉化為演算法可以識別的特徵
 > 3. 特徵選擇: 從所有的特徵中選擇一組最好的特徵集，捨去無關的特徵，保留相關性高的特徵
 
-### 3.1 特徵建構
+<h3 id="3.1">3.1 特徵建構</h3>
 
 <font size=2>&emsp;&emsp;特徵建構主要是觀察原始數據，並將各個特徵做結合，建造超新的特徵。在產生新特徵的同時，也會捨棄原始的特徵，讓特徵維度降低，或維持在一定的水平，否則之後機器學習建模時很容易遇到「維度的詛咒」。
 
-### 3.1.1 Family
+<h3 id="3.1.1">3.1.1 Family</h3> 
 
 <font size=2>&emsp;&emsp;我們目前有兩個相似的屬性Parch與Sibsp，分別是家庭人數與親戚人數，由於這兩個屬性是很類似的。我們可以將Parch與Sibsp相加，再加上自己1人，創建一個Family的新的屬性，當相關性高的屬性變少，有效降低維度，有利於未來的預測精準度。
 
@@ -918,8 +970,7 @@ full_data['Single'] = full_data['Family'].map(lambda s: 1 if s == 1 else 0)
 full_data['SmallF'] = full_data['Family'].map(lambda s: 1 if 2 <= s <= 4 else 0)
 full_data['LargeF'] = full_data['Family'].map(lambda s: 1 if s >= 5 else 0)
 ```
-
-### 3.1.2 Title
+<h3 id="3.1.2">3.1.2 Title</h3> 
 
 <font size=2>&emsp;&emsp;我這邊想探討姓名的稱謂，因為不同的稱謂可能代表不同的身分，假設他是船員，由於工作責任，可能逃生的優先順序就會比較後面，希望能藉此發現一些新的影響因子。
 
@@ -978,7 +1029,7 @@ plt.show()
 
 <font size=2>&emsp;&emsp;藉由稱謂統計與存活分布圖，我們可以發現，貴族的生存率是100%，而女性與小孩都超過50%，男性與Rare的存活率都低於30%，這是我們之後分析的重要參考。
 
-### 3.1.2.1 Age遺漏值填補進階
+<h4 id="3.1.2.1">3.1.2.1 Age遺漏值填補進階</h4> 
 
 <font size=2>&emsp;&emsp;此處我們可以發掘Title與存活率是有相關性的，而且可以把資料分得更細，所以回到2.2.1節的Age遺漏值填補，可以依照不同的Title的類別，結合正負標準差的填補法，填補更準確的年齡值，增加Age屬性的可靠度。(P.S. 若執行此節方法，則2.2.1方法可跳過)
 
@@ -996,8 +1047,7 @@ for i in Tit:
 
 full_data['Age'] = full_data['Age'].astype(int) 
 ```
-
-### 3.1.3 Person
+<h3 id="3.1.3">3.1.3 Person</h3> 
 
 <font size=2>&emsp;&emsp;我們在2.2.1節時，發現可能當時有「老人與小孩先走」的救援順序，因此我想將建立一個新的Person屬性，依性別填入"Male"、"Female"，低於6歲的人為"child"，高於60歲的人為"older"
 
@@ -1008,8 +1058,7 @@ full_data['Person'] =  full_data["Sex"]
 full_data.loc[full_data['Age'] <= 6,'Person'] = 'child'
 full_data.loc[full_data['Age'] >= 60,'Person'] = 'older'
 ```
-
-### 3.1.4 TPP指標(Title+Pclass+Person)
+<h3 id="3.1.4">3.1.4 TPP指標(Title+Pclass+Person)</h3> 
 
 <font size=2>&emsp;&emsp;到目前為止，我們所觀察的都是單一屬性與存活率的關係，這個前提是"每個屬性都是獨立的"，然而生活中往往很多屬性都有相互的關聯，因此我這邊採用交叉比對分類的方式，同時參考Title、Pclass、Person屬性，製作新的TPP指標，希望能有更好的預測效果。
 
@@ -1053,8 +1102,7 @@ for i in Persons:
                 full_data.loc[(full_data.Title==g)&(full_data.Pclass==j)&(full_data.Person==i),'TPP']=4
 
 ```
-
-### 3.2 特徵提取
+<h2 id="3.2">3.2 特徵提取</h2> 
 
 <font size=2>&emsp;&emsp;在特徵建構完成之後，接著要做特徵提取，「特徵提取」的首要任務是將變數從文字轉換成數字/序數值，以利統計與導入演算法模型。以下分成兩種類型:
 > 1. 定性數據: 名目型，類別之間沒有自然順序或是大小(ex.Title、Sex)
@@ -1180,7 +1228,7 @@ print(full_data.head(3))
 
 <font size=2>&emsp;&emsp;我們可以藉由上表的觀察，目前所擁有的所有特徵，並判斷需要進行特徵提取的特徵。以下是需要進行特徵提取的部分，Fare、Age可以從連續型轉換成離散，Pclass、Person可以使用「one-hot encoding」轉換，而Title可以對應到數值。
 
-### 3.2.1 Cut(Fare, Age)
+<h3 id="3.2.1">3.2.1 Cut(Fare, Age)</h3> 
 
 <font size=2>&emsp;&emsp;將Fare分成五等分，將Age分成六等分，精簡模型的數值分析。
 
@@ -1205,7 +1253,7 @@ full_data.loc[(full_data.Age>40)&(full_data.Fare<=60),'AgeCut']=5    # Adult
 full_data.loc[full_data.Age>60,'AgeCut']=6                           # Senior
 ```
 
-### 3.2.2 Pclass & Person & Title
+<h3 id="3.2.2">3.2.2 Pclass & Person & Title</h3> 
 
 <font size=2>&emsp;&emsp;在Pclass中，我們可以看到主要分成1~3個等級，以1、2、3作為分類，但是這三個等級之間沒有數值關係，演算法會將Pclass3視為比Pclass2大，為了避免誤導演算法的執行，這邊常使用的解決方法為「one-hot encoding」技術，將每個名目類別都建立一個新的特徵，以下我們將Pclass分成三個新的類別Pclass_1、Pclass_2、Pclass_3。<br>
 <font size=2>&emsp;&emsp;同時，我們可以觀察出Pclass_1的乘客的獲救率較高，右圖再加上性別的特徵綜合來看，Pclass1與2的女性乘客存活率高達90%以上，這可以做為之後特徵選擇的參考。
@@ -1246,8 +1294,7 @@ full_data = pd.get_dummies(full_data, columns = ["Embarked"], prefix="Em")
 ```python
 full_data["Title"] = full_data["Title"].map({"Mr":0, "Rare":1, "Master":2, "Miss":3, "Mrs":4, "Royal":5})
 ```
-
-### 3.2.3 特徵選擇
+<h3 id="3.3">3.3 特徵選擇</h3>
 
 
 ```python
@@ -1704,12 +1751,11 @@ full_data.head()
 </div>
 
 
-
-## 4. 建立模型
+<h2 id="4">4. 模型建立</h2>
 
 <font size=2>&emsp;&emsp;經過前面的清洗與特徵工程的調整後，現在這個階段，我們要將full_data再次分成test與train，並進行Cross-validation交叉驗證，並套用scikit-learn演算法。
-
-### 4.1 檔案分割
+    
+<h3 id="4.1">4.1 檔案分割</h3>
 
 <font size=2>&emsp;&emsp;為了之後訓練train資料集，需要先得到train與test資料集，並將test資料集分成測試答案y與測試題目X，去驗證自身準確度。
 
@@ -1726,8 +1772,7 @@ train["Survived"].astype(int)
 y = train["Survived"]
 X = train.drop(labels =["Survived"], axis = 1)
 ```
-
-### 4.2 Cross-validation交叉驗證
+<h3 id="4.2">4.2 Cross-validation交叉驗證</h3>
 
 <font size=2>&emsp;&emsp;交叉驗證(Cross-validation)主要用於模型訓練或建模應用中，如分類預測、PCR、PLS回歸建模等。在給定的樣本空間中，拿出大部分樣本作為訓練集來訓練模型，剩餘的小部分樣本使用剛建立的模型進行預測，並求這小部分樣本的預測誤差或者預測精度。使用交叉驗證方法的目的主要有3個：
 > 1. 從有限的學習數據中獲取儘可能多的有效信息
@@ -1753,7 +1798,7 @@ X_train_normalized = sc.transform(X_train)
 X_cv_normalized = sc.transform(X_cv)
 ```
 
-### 4.3 引入作圖程式
+<h3 id="4.3">4.3 引入作圖程式</h3>
 
 <font size=2>&emsp;&emsp;以下引入scikit-learn官網所提供的作圖程式，讓我們站在巨人們的肩膀上看得更遠吧！
 
@@ -1843,8 +1888,7 @@ def plot_confusion_matrix(cm, classes,
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
 ```
-
-### 4.4 代入演算法
+<h3 id="4.4">4.4 代入演算法</h3>
 
 <font size=2>&emsp;&emsp;這邊我代入許多線上常用的演算法，去觀察哪個演算法在此題的表現較好，將進行CV後的結果視覺化。
 
@@ -2036,8 +2080,7 @@ plt.show()
 
 ![Imgur](https://i.imgur.com/O1F6Jy1.png)
 
-
-### 4.5 綜合演算法votingC
+<h3 id="4.5">4.5 綜合演算法votingC</h3>
 
 <font size=2>&emsp;&emsp;在將這三個演算法，放入votingC的綜合演算法，也就是讓這三個演算法進行投票，決定最終的答案。讓我們先觀察votingC的學習曲線。
 
@@ -2120,7 +2163,7 @@ plt.show()
 
 <font size=2>&emsp;&emsp;混淆矩陣主要判斷依據是f1 score越接近1越好。這次用train的預測成果，有31個存活者被我誤判成死亡，而有17個罹難者，我以為他們是倖存的，由此我可以做模型的調整。
 
-## 5. 繳交答案
+<h2 id="5">5. 繳交答案</h2>
 
 <font size=2>&emsp;&emsp;花了那麼多時間研究，終於要面對預測成果了，就讓我們輸出答案，上傳到Kaggle看看評分吧！
 
